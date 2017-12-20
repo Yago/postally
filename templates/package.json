@@ -3,7 +3,5 @@
   "version": "0.0.0",
   "main": "index.html",
   "license": "MIT",
-  "dependencies": {
-    "foundation-emails": "latest"
-  }
+  "dependencies": {}
 }

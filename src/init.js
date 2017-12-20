@@ -1,19 +1,26 @@
 const path = require('path');
 const fs = require('fs-extra');
+const npm = require('npm-programmatic');
 
-module.exports = async (args, done) => {
+module.exports = (args, done) => {
   let target = path.resolve('.')
   if (args[1]) target = path.resolve(args[1]);
   
   const exist = fs.pathExistsSync(target);
 
   const empty = exist ? fs.readdirSync(target).length <= 0 : true;
-  if (!empty) done('red', '⚠️  Directory is not empty');
+  if (!empty) done('red', `⚠️  ${target} is not empty`);
 
   if (!exist) fs.ensureDirSync(target);
 
-  const templates = path.resolve(__dirname, '../templates/');
-  fs.copySync(templates, target);
-
-  done('green', 'Success !');
+  if (empty) {
+    const templates = path.resolve(__dirname, '../templates/');
+    fs.copySync(templates, target);
+    npm.install(['foundation-emails'], {
+      cwd: target,
+      save: true,
+    }).then(() => {
+      done('green', 'Init success !');
+    });
+  }
 };
