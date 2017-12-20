@@ -25,7 +25,8 @@ const postally = {
 
 const launch = () => {
   spinner.start();
-  postally[argv._[0]](argv._, () => {
+  postally[argv._[0]](argv._, (color, msg) => {
+    console.log(chalk[color](msg));
     spinner.stop(true);
   });
 };
