@@ -1,6 +1,9 @@
+const path = require('path');
+const builder = require('./_builder');
+
 module.exports = (args, done) => {
-  setTimeout(() => {
-    console.log(args);
-    done();
-  }, 1000);
+  const currentPath = path.resolve('.');
+  builder(currentPath, (...arguments) => {
+    done(...arguments);
+  })
 };
