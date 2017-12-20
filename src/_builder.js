@@ -14,11 +14,11 @@ module.exports = async (currentPath, done) => {
     if (!fs.pathExistsSync(file)) done('red', `Missing ${file} !`);
   });
 
-  const filePath = (name) => path.resolve(currentPath, name);
-  const data = fs.readJsonSync(filePath('data.json'));
-  const markup = fs.readFileSync(filePath('index.html'), 'utf8');
-  const variables = fs.readFileSync(filePath('variables.scss'), 'utf8');
-  const styles = fs.readFileSync(filePath('styles.scss'), 'utf8');
+  const fixPath = (name) => path.resolve(currentPath, name);
+  const data = fs.readJsonSync(fixPath('data.json'));
+  const markup = fs.readFileSync(fixPath('index.html'), 'utf8');
+  const variables = fs.readFileSync(fixPath('variables.scss'), 'utf8');
+  const styles = fs.readFileSync(fixPath('styles.scss'), 'utf8');
 
   // Build CSS from Foundation for Email
   const css = await new Promise((resolve, reject) => {
@@ -38,8 +38,15 @@ module.exports = async (currentPath, done) => {
     return inlineCss(body, { url: '/' }).then(html => resolve(html));
   });
 
-  const target = path.resolve(currentPath, 'build/index.html');
-  fs.outputFileSync(target, sanitizedBody);
+  const targetDir = path.resolve(currentPath, 'build/');
+  const targetFile = `${targetDir}index.html`;
+  fs.outputFileSync(targetFile, sanitizedBody);
+  
+  fs.readdir(fixPath('images/'), (err, files) => {
+    files.forEach((file) => {
+      fs.copySync(fixPath(`images/${file}`), `${targetDir}/${file}`);
+    });
+  });
 
   done('green', '👍  Successfully builded');
 };
