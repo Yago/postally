@@ -39,7 +39,7 @@ module.exports = async (currentPath, done) => {
   });
 
   const targetDir = path.resolve(currentPath, 'build/');
-  const targetFile = `${targetDir}index.html`;
+  const targetFile = `${targetDir}/index.html`;
   fs.outputFileSync(targetFile, sanitizedBody);
   
   fs.readdir(fixPath('images/'), (err, files) => {
