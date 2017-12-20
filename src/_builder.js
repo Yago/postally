@@ -5,16 +5,12 @@ const sass = require('node-sass');
 const Inky = require('inky').Inky;
 const inlineCss = require('inline-css');
 
+const workingFiles = require('../config.json').workingFiles;
 const postallyHTML = require('./templates/html.js');
 const postallySASS = require('./templates/sass.js');
 
 module.exports = async (currentPath, done) => {
-  [
-    'data.json',
-    'index.html',
-    'variables.scss',
-    'styles.scss'
-  ].forEach((file) => {
+  workingFiles.forEach((file) => {
     if (!fs.pathExistsSync(file)) done('red', `Missing ${file} !`);
   });
 

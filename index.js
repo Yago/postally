@@ -24,11 +24,15 @@ const postally = {
 };
 
 const launch = () => {
-  spinner.start();
-  postally[argv._[0]](argv._, (color, msg) => {
-    console.log(chalk[color](`${msg}`));
-    spinner.stop(true);
-  });
+  if (argv._[0] !== 'start') {
+    spinner.start();
+    postally[argv._[0]](argv._, (color, msg) => {
+      console.log(chalk[color](`${msg}`));
+      spinner.stop(true);
+    });
+  } else {
+    postally.start();
+  }
 };
 
 launch();
