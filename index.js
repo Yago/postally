@@ -24,10 +24,15 @@ const postally = {
 };
 
 const launch = () => {
+  if (!postally[argv._[0]]) {
+    console.log(chalk.red('⚠️  Unknown command !'));
+    return false;
+  }
+
   if (argv._[0] !== 'start') {
     spinner.start();
     postally[argv._[0]](argv._, (color, msg) => {
-      console.log(chalk[color](`${msg}`));
+      console.log(chalk[color](`\n${msg}`));
       spinner.stop(true);
     });
   } else {
