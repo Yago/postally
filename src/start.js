@@ -19,7 +19,7 @@ module.exports = (args, done) => {
         borderBottomLeftRadius: 0,
       }
     },
-    open: false
+    open: true
   });
 
   const rebuild = (path) => {
