@@ -7,10 +7,10 @@ spinner.setSpinnerString('|/-\\');
 const argv = require('yargs')
   .help('h')
   .alias('h', 'help')
-  .command('init', 'Init project')
-  .command('start', 'Start project')
-  .command('build', 'Build project')
-  .usage('Usage: $0')
+  .command('init', 'Bootstrap new project in defined (or not) directory')
+  .command('start', 'Start the development server and the auto-rebuild')
+  .command('build', 'Build project once')
+  .usage('Usage: $0 [cmd] [optional init directory]')
   .argv;
 
 const init = require('./src/init');
