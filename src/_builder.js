@@ -5,6 +5,7 @@ const sass = require('node-sass');
 const Inky = require('inky').Inky;
 const inlineCss = require('inline-css');
 
+// Get builder resources
 const workingFiles = require('../config.json').workingFiles;
 const postallyHTML = require('./templates/html.js');
 const postallySASS = require('./templates/sass.js');
@@ -14,6 +15,7 @@ module.exports = async (currentPath, done) => {
     if (!fs.pathExistsSync(file)) done('red', `Missing ${file} !`);
   });
 
+  // Load project's data, markup and styles
   const fixPath = (name) => path.resolve(currentPath, name);
   const data = fs.readJsonSync(fixPath('data.json'));
   const markup = fs.readFileSync(fixPath('index.html'), 'utf8');
@@ -38,6 +40,7 @@ module.exports = async (currentPath, done) => {
     return inlineCss(body, { url: '/' }).then(html => resolve(html));
   });
 
+  // Add compiled markup and images into build directory
   const targetDir = path.resolve(currentPath, 'build/');
   const targetFile = `${targetDir}/index.html`;
   fs.outputFileSync(targetFile, sanitizedBody);

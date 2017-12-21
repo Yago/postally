@@ -8,6 +8,7 @@ const workingFiles = require('../config.json').workingFiles;
 module.exports = (args, done) => {
   const currentPath = path.resolve('.');
 
+  // Set web server
   browserSync.init({
     server: {
       baseDir: `${currentPath}/build`,
@@ -22,6 +23,7 @@ module.exports = (args, done) => {
     open: true
   });
 
+  // Set the recuring build task
   const rebuild = (path) => {
     builder(currentPath, (...arguments) => {
       const d = new Date();
@@ -33,7 +35,7 @@ module.exports = (args, done) => {
     });
   };
 
-
+  // Watch working files and trigger rebuild
   chokidar
     .watch(workingFiles)
     .on('add', path => rebuild(path))
