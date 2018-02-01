@@ -19,6 +19,7 @@ module.exports = async (currentPath, done) => {
   const fixPath = (name) => path.resolve(currentPath, name);
   const data = fs.readJsonSync(fixPath('data.json'));
   const markup = fs.readFileSync(fixPath('index.html'), 'utf8');
+  const head_markup = fs.readFileSync(fixPath('head.html'), 'utf8');
   const variables = fs.readFileSync(fixPath('variables.scss'), 'utf8');
   const styles = fs.readFileSync(fixPath('styles.scss'), 'utf8');
 
@@ -34,10 +35,13 @@ module.exports = async (currentPath, done) => {
   });
 
   // Create Email HTML using Twig, Inky and Zurb inline CSS
-  const html = Twig.twig({data: postallyHTML(markup, css)}).render(data);
+  const html = Twig.twig({data: postallyHTML(head_markup, markup, css)}).render(data);
   const body = new Inky({}).releaseTheKraken(html);
   const sanitizedBody = await new Promise((resolve, reject) => {
-    return inlineCss(body, { url: '/' }).then(html => resolve(html));
+    return inlineCss(body, {
+      url: '/',
+      preserveMediaQueries: true,
+    }).then(html => resolve(html));
   });
 
   // Add compiled markup and images into build directory

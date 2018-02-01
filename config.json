@@ -1,6 +1,7 @@
 {
   "workingFiles": [
     "data.json",
+    "head.html",
     "index.html",
     "variables.scss",
     "styles.scss",
