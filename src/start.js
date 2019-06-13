@@ -37,7 +37,7 @@ module.exports = (args, done) => {
 
   // Watch working files and trigger rebuild
   chokidar
-    .watch(workingFiles)
+    .watch([...workingFiles, 'index*.html'])
     .on('add', path => rebuild(path))
     .on('change', path => rebuild(path));
 };
