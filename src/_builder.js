@@ -18,7 +18,13 @@ module.exports = async (currentPath, done) => {
   // Load project's data, markup and styles
   const fixPath = name => path.resolve(currentPath, name);
   const data = fs.readJsonSync(fixPath('data.json'));
-  const markup = fs.readFileSync(fixPath('index.html'), 'utf8');
+  const markups = fs
+    .readdirSync(fixPath('.'))
+    .filter(file => file.match(/^index.*\.html$/g))
+    .map(filename => ({
+      filename,
+      markup: fs.readFileSync(fixPath(filename), 'utf8'),
+    }));
   const headMarkup = fs.readFileSync(fixPath('head.html'), 'utf8');
   const variables = fs.readFileSync(fixPath('variables.scss'), 'utf8');
   const styles = fs.readFileSync(fixPath('styles.scss'), 'utf8');
@@ -38,21 +44,27 @@ module.exports = async (currentPath, done) => {
   );
 
   // Create Email HTML using Twig, Inky and Zurb inline CSS
-  const html = Twig.twig({
-    data: postallyHTML(headMarkup, markup, css),
-  }).render(data);
-  const body = new Inky({}).releaseTheKraken(html);
-  const sanitizedBody = await new Promise(resolve =>
-    inlineCss(body, {
+  const sanitizedBodies = markups.map(item => {
+    const html = Twig.twig({
+      data: postallyHTML(headMarkup, item.markup, css),
+    }).render(data);
+    const body = new Inky({}).releaseTheKraken(html);
+    return inlineCss(body, {
       url: '/',
       preserveMediaQueries: true,
-    }).then(dom => resolve(dom))
-  );
+    }).then(dom => ({
+      ...item,
+      dom,
+    }));
+  });
+  const outputs = await Promise.all(sanitizedBodies);
 
   // Add compiled markup and images into build directory
   const targetDir = path.resolve(currentPath, 'build/');
-  const targetFile = `${targetDir}/index.html`;
-  fs.outputFileSync(targetFile, sanitizedBody);
+  outputs.forEach(output => {
+    const targetFile = `${targetDir}/${output.filename}`;
+    fs.outputFileSync(targetFile, output.dom);
+  });
 
   fs.readdir(fixPath('images/'), (err, files) => {
     files.forEach(file => {
