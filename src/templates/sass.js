@@ -1,5 +1,4 @@
-module.exports = (variables, css) => {
-  return `
+module.exports = (variables, css) => `
 @charset "UTF-8";
 
 ${variables}
@@ -21,4 +20,3 @@ ${variables}
 
 ${css}
   `;
-};
